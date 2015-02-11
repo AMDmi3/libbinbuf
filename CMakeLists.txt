@@ -1,0 +1,63 @@
+PROJECT(libbinfmt)
+
+# meta
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
+# compiler flags & definitions
+IF(MSVC)
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
+	SET(WERROR_FLAG "/WX")
+ELSE(MSVC)
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Wextra -pedantic")
+	SET(WERROR_FLAG "-Werror")
+ENDIF(MSVC)
+
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
+
+# sources
+SET(LIBRARY_SOURCES
+	binfmt/Buffer.cc
+	binfmt/MMapFileContainer.cc
+	binfmt/StreamFileContainer.cc
+)
+
+SET(LIBRARY_HEADERS
+	binfmt/Buffer.hh
+	binfmt/Config.hh
+	binfmt/FileContainer.hh
+	binfmt/MMapFileContainer.hh
+	binfmt/StreamFileContainer.hh
+)
+
+SET(LIBRARY_INTERNAL_HEADERS
+	binfmt/internal/Chunk.hh
+	binfmt/internal/ManagedChunk.hh
+)
+
+# targets
+IF(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+	MESSAGE(STATUS "libbinfmt standalone build")
+
+	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WERROR_FLAG}")
+
+	# library
+	ADD_LIBRARY(binfmt SHARED ${LIBRARY_SOURCES} ${LIBRARY_HEADERS} ${LIBRARY_INTERNAL_HEADERS})
+	SET_TARGET_PROPERTIES(binfmt PROPERTIES VERSION 0.0.0 SOVERSION 0)
+
+	# and tests
+	ENABLE_TESTING()
+
+	ADD_SUBDIRECTORY(tests)
+
+	INSTALL(FILES ${LIBRARY_HEADERS} DESTINATION include/binfmt)
+	INSTALL(TARGETS binfmt LIBRARY DESTINATION lib)
+ELSE(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+	MESSAGE(STATUS "libbinfmt bundled build")
+
+	# library
+	ADD_LIBRARY(binfmt STATIC ${LIBRARY_SOURCES} ${LIBRARY_HEADERS} ${LIBRARY_INTERNAL_HEADERS})
+
+	# provide variables to parent
+	SET(BINFMT_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} PARENT_SCOPE)
+	SET(BINFMT_LIBRARIES binfmt PARENT_SCOPE)
+ENDIF(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
