@@ -135,8 +135,8 @@ int8_t Buffer::GetS8(size_t offset) const {
 
 uint16_t Buffer::GetU16LE(size_t offset) const {
 	const Byte* offptr = chunk_->GetData() + offset_ + offset;
-	return (uint16_t)*(offptr)
-		| ((uint16_t)*(offptr + 1) << 8);
+	return (uint16_t)(uint8_t)*(offptr)
+		| ((uint16_t)(uint8_t)*(offptr + 1) << 8);
 }
 
 int16_t Buffer::GetS16LE(size_t offset) const {
@@ -154,10 +154,10 @@ int16_t Buffer::GetS16BE(size_t offset) const {
 
 uint32_t Buffer::GetU32LE(size_t offset) const {
 	const Byte* offptr = chunk_->GetData() + offset_ + offset;
-	return (uint32_t)*(offptr)
-		| ((uint32_t)*(offptr + 1) << 8)
-		| ((uint32_t)*(offptr + 2) << 16)
-		| ((uint32_t)*(offptr + 3) << 24);
+	return (uint32_t)(uint8_t)*(offptr)
+		| ((uint32_t)(uint8_t)*(offptr + 1) << 8)
+		| ((uint32_t)(uint8_t)*(offptr + 2) << 16)
+		| ((uint32_t)(uint8_t)*(offptr + 3) << 24);
 }
 
 int32_t Buffer::GetS32LE(size_t offset) const {
@@ -166,10 +166,10 @@ int32_t Buffer::GetS32LE(size_t offset) const {
 
 uint32_t Buffer::GetU32BE(size_t offset) const {
 	const Byte* offptr = chunk_->GetData() + offset_ + offset;
-	return ((uint32_t)*(offptr) << 24)
-		| ((uint32_t)*(offptr + 1) << 16)
-		| ((uint32_t)*(offptr + 2) << 8)
-		| (uint32_t)*(offptr + 3);
+	return ((uint32_t)(uint8_t)*(offptr) << 24)
+		| ((uint32_t)(uint8_t)*(offptr + 1) << 16)
+		| ((uint32_t)(uint8_t)*(offptr + 2) << 8)
+		| (uint32_t)(uint8_t)*(offptr + 3);
 }
 
 int32_t Buffer::GetS32BE(size_t offset) const {
