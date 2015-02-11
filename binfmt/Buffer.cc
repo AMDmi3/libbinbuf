@@ -156,7 +156,7 @@ uint32_t Buffer::GetU32LE(size_t offset) const {
 	const Byte* offptr = chunk_->GetData() + offset_ + offset;
 	return (uint32_t)*(offptr)
 		| ((uint32_t)*(offptr + 1) << 8)
-		| ((uint32_t)*(offptr + 2)  << 16)
+		| ((uint32_t)*(offptr + 2) << 16)
 		| ((uint32_t)*(offptr + 3) << 24);
 }
 
