@@ -12,3 +12,7 @@ ENDFOREACH(HEADER ${TESTS})
 ADD_EXECUTABLE(binfmt_test binfmt_test.cc)
 TARGET_LINK_LIBRARIES(binfmt_test binfmt)
 ADD_TEST(binfmt_test binfmt_test)
+
+ADD_EXECUTABLE(string_test string_test.cc)
+TARGET_LINK_LIBRARIES(string_test binfmt)
+ADD_TEST(string_test string_test)
