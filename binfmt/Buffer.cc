@@ -181,8 +181,11 @@ std::string Buffer::GetString(size_t offset, size_t length) const {
 		offset = size_;
 	if (length > size_ - offset)
 		length = size_ - offset;
-	const Byte* offptr = chunk_->GetData() + offset_ + offset;
-	return std::string(reinterpret_cast<const char*>(offptr), length);
+	const Byte* start = chunk_->GetData() + offset_ + offset;
+	const Byte* zeropos = std::find(start, start + length, (Byte)0);
+	if (zeropos != start + length)
+		length = zeropos - start;
+	return std::string(reinterpret_cast<const char*>(start), length);
 }
 
 }
