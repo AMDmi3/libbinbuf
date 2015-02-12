@@ -75,20 +75,30 @@ BEGIN_TEST()
 		EXPECT_EQUAL((int)data[0], 0x01);
 		EXPECT_EQUAL((int)data[1], 0x23);
 
-		EXPECT_EQUAL((int)data.GetU8(3), 0x67);
+		EXPECT_EQUAL((int)data.GetU8(3), 103);
+		EXPECT_EQUAL((int)data.GetS8(3), 103);
+		EXPECT_EQUAL((int)data.GetU8(7), 239);
 		EXPECT_EQUAL((int)data.GetS8(7), -17);
 
 		// word getters
-		EXPECT_EQUAL(data.GetU16LE(1), 0x4523);
-		EXPECT_EQUAL(data.GetU16BE(1), 0x2345);
+		EXPECT_EQUAL((int)data.GetU16LE(1), 0x4523);
+		EXPECT_EQUAL((int)data.GetU16BE(1), 0x2345);
+		EXPECT_EQUAL((int)data.GetU16LE(5), 0xCDAB);
+		EXPECT_EQUAL((int)data.GetU16BE(5), 0xABCD);
 
-		EXPECT_EQUAL(data.GetS16LE(5), -12885);
-		EXPECT_EQUAL(data.GetS16BE(5), -21555);
+		EXPECT_EQUAL((int)data.GetS16LE(1), 17699);
+		EXPECT_EQUAL((int)data.GetS16BE(1), 9029);
+		EXPECT_EQUAL((int)data.GetS16LE(5), -12885);
+		EXPECT_EQUAL((int)data.GetS16BE(5), -21555);
 
 		// dword getters
 		EXPECT_EQUAL(data.GetU32LE(0), 0x67452301U);
 		EXPECT_EQUAL(data.GetU32BE(0), 0x01234567U);
+		EXPECT_EQUAL(data.GetU32LE(4), 0xEFCDAB89U);
+		EXPECT_EQUAL(data.GetU32BE(4), 0x89ABCDEFU);
 
+		EXPECT_EQUAL(data.GetS32LE(0), 1732584193);
+		EXPECT_EQUAL(data.GetS32BE(0), 19088743);
 		EXPECT_EQUAL(data.GetS32LE(4), -271733879);
 		EXPECT_EQUAL(data.GetS32BE(4), -1985229329);
 
