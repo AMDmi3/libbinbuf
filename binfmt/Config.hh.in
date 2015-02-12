@@ -29,7 +29,7 @@
 
 namespace BinFmt {
 
-typedef unsigned char Byte;
+typedef @BINFMT_BYTE_TYPE@ Byte;
 
 }
 

@@ -3,6 +3,9 @@ PROJECT(libbinfmt)
 # meta
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
+# options
+SET(BINFMT_BYTE_TYPE "char" CACHE STRING "Type used for storing bytes")
+
 # compiler flags & definitions
 IF(MSVC)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W3")
@@ -14,6 +17,14 @@ ENDIF(MSVC)
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
 
+# config.h
+CONFIGURE_FILE(
+	binfmt/Config.hh.in
+	binfmt/Config.hh
+)
+
+INCLUDE_DIRECTORIES(BEFORE ${PROJECT_BINARY_DIR})
+
 # sources
 SET(LIBRARY_SOURCES
 	binfmt/Buffer.cc
@@ -23,7 +34,6 @@ SET(LIBRARY_SOURCES
 
 SET(LIBRARY_HEADERS
 	binfmt/Buffer.hh
-	binfmt/Config.hh
 	binfmt/FileContainer.hh
 	binfmt/MMapFileContainer.hh
 	binfmt/StreamFileContainer.hh
@@ -49,7 +59,7 @@ IF(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
 
 	ADD_SUBDIRECTORY(tests)
 
-	INSTALL(FILES ${LIBRARY_HEADERS} DESTINATION include/binfmt)
+	INSTALL(FILES ${LIBRARY_HEADERS} ${PROJECT_BINARY_DIR}/binfmt/Config.hh DESTINATION include/binfmt)
 	INSTALL(TARGETS binfmt LIBRARY DESTINATION lib)
 ELSE(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
 	MESSAGE(STATUS "libbinfmt bundled build")
