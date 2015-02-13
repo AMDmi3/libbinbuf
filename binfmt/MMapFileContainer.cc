@@ -60,7 +60,15 @@ MMapFileContainer::MMapFileContainer(const std::string& path) {
 		if (fstat(fd, &st) == -1)
 			throw std::runtime_error("cannot stat() file");
 
-		void* map = mmap(nullptr, st.st_size, PROT_READ, MAP_PRIVATE | MAP_NOCORE, fd, 0);
+		int mmap_flags = MAP_PRIVATE;
+#ifdef MAP_NOCORE
+		mmap_flags |= MAP_NOCORE;
+#endif
+#ifdef MAP_NORESERVE
+		mmap_flags |= MAP_NORESERVE;
+#endif
+
+		void* map = mmap(nullptr, st.st_size, PROT_READ, mmap_flags, fd, 0);
 		if (map == nullptr)
 			throw std::runtime_error("mmap() failed");
 
