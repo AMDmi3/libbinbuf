@@ -40,7 +40,7 @@ Buffer::Buffer(std::shared_ptr<Internal::Chunk> chunk, size_t offset, size_t siz
 		size_ = real_size - offset_;
 }
 
-Buffer::Buffer(size_t size) : chunk_(new Internal::ManagedChunk(size)) {
+Buffer::Buffer(size_t size) : chunk_(new Internal::ManagedChunk(size)), offset_(0), size_(size) {
 }
 
 Buffer::~Buffer() {
