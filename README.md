@@ -1,5 +1,7 @@
 # libbinfmt
 
+[![Build Status](https://travis-ci.org/AMDmi3/libbinfmt.svg?branch=master)](https://travis-ci.org/AMDmi3/libbinfmt)
+
 Binary format parsing abstraction library.
 
 ## Synopsis
