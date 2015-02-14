@@ -1,10 +1,12 @@
-PROJECT(libbinfmt)
+PROJECT(libbinbuf)
 
 # meta
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 # options
-SET(BINFMT_BYTE_TYPE "char" CACHE STRING "Type used for storing bytes")
+IF(NOT BINBUF_BYTE_TYPE)
+	SET(BINBUF_BYTE_TYPE "char")
+ENDIF(NOT BINBUF_BYTE_TYPE)
 
 # compiler flags & definitions
 IF(MSVC)
@@ -19,55 +21,57 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
 
 # config.h
 CONFIGURE_FILE(
-	binfmt/Config.hh.in
-	binfmt/Config.hh
+	binbuf/Config.hh.in
+	binbuf/Config.hh
 )
 
 INCLUDE_DIRECTORIES(BEFORE ${PROJECT_BINARY_DIR})
 
 # sources
 SET(LIBRARY_SOURCES
-	binfmt/Buffer.cc
-	binfmt/MMapFileContainer.cc
-	binfmt/StreamFileContainer.cc
+	binbuf/Buffer.cc
+	binbuf/MMapFileContainer.cc
+	binbuf/StreamFileContainer.cc
 )
 
 SET(LIBRARY_HEADERS
-	binfmt/Buffer.hh
-	binfmt/FileContainer.hh
-	binfmt/MMapFileContainer.hh
-	binfmt/StreamFileContainer.hh
+	binbuf/Buffer.hh
+	binbuf/FileContainer.hh
+	binbuf/MMapFileContainer.hh
+	binbuf/StreamFileContainer.hh
 )
 
 SET(LIBRARY_INTERNAL_HEADERS
-	binfmt/internal/Chunk.hh
-	binfmt/internal/ManagedChunk.hh
+	binbuf/internal/Chunk.hh
+	binbuf/internal/ManagedChunk.hh
 )
 
 # targets
 IF(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-	MESSAGE(STATUS "libbinfmt standalone build")
+	MESSAGE(STATUS "libbinbuf standalone build")
+	MESSAGE(STATUS "libbinbuf byte type: ${BINBUF_BYTE_TYPE}")
 
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WERROR_FLAG}")
 
 	# library
-	ADD_LIBRARY(binfmt SHARED ${LIBRARY_SOURCES} ${LIBRARY_HEADERS} ${LIBRARY_INTERNAL_HEADERS})
-	SET_TARGET_PROPERTIES(binfmt PROPERTIES VERSION 0.0.0 SOVERSION 0)
+	ADD_LIBRARY(binbuf SHARED ${LIBRARY_SOURCES} ${LIBRARY_HEADERS} ${LIBRARY_INTERNAL_HEADERS})
+	SET_TARGET_PROPERTIES(binbuf PROPERTIES VERSION 0.0.0 SOVERSION 0)
 
 	# and tests
 	ENABLE_TESTING()
 
 	ADD_SUBDIRECTORY(tests)
 
-	INSTALL(FILES ${LIBRARY_HEADERS} ${PROJECT_BINARY_DIR}/binfmt/Config.hh DESTINATION include/binfmt)
-	INSTALL(TARGETS binfmt LIBRARY DESTINATION lib)
+	INSTALL(FILES ${LIBRARY_HEADERS} ${PROJECT_BINARY_DIR}/binbuf/Config.hh DESTINATION include/binbuf)
+	INSTALL(TARGETS binbuf LIBRARY DESTINATION lib)
 ELSE(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-	MESSAGE(STATUS "libbinfmt bundled build")
+	MESSAGE(STATUS "libbinbuf bundled build")
+	MESSAGE(STATUS "libbinbuf byte type: ${BINBUF_BYTE_TYPE}")
 
 	# library
-	ADD_LIBRARY(binfmt STATIC ${LIBRARY_SOURCES} ${LIBRARY_HEADERS} ${LIBRARY_INTERNAL_HEADERS})
+	ADD_LIBRARY(binbuf STATIC ${LIBRARY_SOURCES} ${LIBRARY_HEADERS} ${LIBRARY_INTERNAL_HEADERS})
 
 	# provide variables to parent
-	SET(BINFMT_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} PARENT_SCOPE)
-	SET(BINFMT_LIBRARIES binfmt PARENT_SCOPE)
+	SET(BINBUF_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} PARENT_SCOPE)
+	SET(BINBUF_LIBRARIES binbuf PARENT_SCOPE)
 ENDIF(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)

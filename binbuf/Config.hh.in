@@ -24,12 +24,12 @@
  * SUCH DAMAGE.
  */
 
-#ifndef BINFMT_CONFIG_HH
-#define BINFMT_CONFIG_HH
+#ifndef BINBUF_CONFIG_HH
+#define BINBUF_CONFIG_HH
 
-namespace BinFmt {
+namespace BinBuf {
 
-typedef @BINFMT_BYTE_TYPE@ Byte;
+typedef @BINBUF_BYTE_TYPE@ Byte;
 
 }
 

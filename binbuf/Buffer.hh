@@ -24,15 +24,15 @@
  * SUCH DAMAGE.
  */
 
-#ifndef BINFMT_BUFFER_HH
-#define BINFMT_BUFFER_HH
+#ifndef BINBUF_BUFFER_HH
+#define BINBUF_BUFFER_HH
 
-#include <binfmt/Config.hh>
+#include <binbuf/Config.hh>
 
 #include <memory>
 #include <string>
 
-namespace BinFmt {
+namespace BinBuf {
 
 namespace Internal {
 class Chunk;

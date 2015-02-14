@@ -24,26 +24,23 @@
  * SUCH DAMAGE.
  */
 
-#ifndef BINFMT_MMAPFILECONTAINER_HH
-#define BINFMT_MMAPFILECONTAINER_HH
+#ifndef BINBUF_STREAMFILECONTAINER_HH
+#define BINBUF_STREAMFILECONTAINER_HH
 
-#include <binfmt/Buffer.hh>
+#include <binbuf/Buffer.hh>
 
-#include <memory>
+#include <fstream>
 
-namespace BinFmt {
+namespace BinBuf {
 
-namespace Internal {
-class MMapChunk;
-}
-
-class MMapFileContainer : public Slicable {
+class StreamFileContainer : public Slicable {
 private:
-	std::shared_ptr<Internal::MMapChunk> chunk_;
+	mutable std::ifstream stream_;
+	size_t size_;
 
 public:
-	MMapFileContainer(const std::string& path);
-	virtual ~MMapFileContainer();
+	StreamFileContainer(const std::string& path);
+	virtual ~StreamFileContainer();
 
 	virtual Buffer GetSlice(size_t offset = 0, size_t size = -1) const override final;
 	virtual size_t GetSize() const override final;

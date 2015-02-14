@@ -1,6 +1,6 @@
-# libbinfmt
+# libbinbuf
 
-[![Build Status](https://travis-ci.org/AMDmi3/libbinfmt.svg?branch=master)](https://travis-ci.org/AMDmi3/libbinfmt)
+[![Build Status](https://travis-ci.org/AMDmi3/libbinbuf.svg?branch=master)](https://travis-ci.org/AMDmi3/libbinbuf)
 
 Binary format parsing abstraction library.
 
@@ -65,7 +65,7 @@ binary file parsing. What it does for you:
 
 ## Usage ##
 
-To build libbinfmt, you need a compiler with C++11 support, for
+To build libbinbuf, you need a compiler with C++11 support, for
 example clang 3.4+ or gcc 4.8+, and cmake.
 
 To build standalone version:
@@ -75,14 +75,14 @@ To build standalone version:
 You may either bundle this library with your project (if you use
 cmake, just add this to your CMakeLists.txt:
 
-    ADD_SUBDIRECTORY(extlib/libbinfmt) # where libbinfmt code is
+    ADD_SUBDIRECTORY(extlib/libbinbuf) # where libbinbuf code is
 
     ...
 
-    INCLUDE_DIRECTORIES(${BINFMT_INCLUDE_DIRS})
+    INCLUDE_DIRECTORIES(${BINBUF_INCLUDE_DIRS})
 
     ADD_EXECUTABLE(mytarget ...)
-    TARGET_LINK_LIBRARIES(mytarget ${BINFMT_LIBRARIES})
+    TARGET_LINK_LIBRARIES(mytarget ${BINBUF_LIBRARIES})
 
 ) or intall it systemwide with
 

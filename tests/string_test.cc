@@ -1,8 +1,8 @@
-#include <binfmt/FileContainer.hh>
+#include <binbuf/FileContainer.hh>
 
 #include "testing.h"
 
-using namespace BinFmt;
+using namespace BinBuf;
 
 BEGIN_TEST()
 	FileContainer container(TESTDATA_DIR "/strings");

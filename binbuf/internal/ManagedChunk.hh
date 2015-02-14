@@ -24,72 +24,30 @@
  * SUCH DAMAGE.
  */
 
-#include <fcntl.h>
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <unistd.h>
+#ifndef BINBUF_MANAGEDCHUNK_HH
+#define BINBUF_MANAGEDCHUNK_HH
 
-#include <stdexcept>
+#include <binbuf/internal/Chunk.hh>
 
-#include <binfmt/MMapFileContainer.hh>
-#include <binfmt/internal/Chunk.hh>
-
-namespace BinFmt {
+namespace BinBuf {
 
 namespace Internal {
 
-class MMapChunk : public Chunk {
+class ManagedChunk : public Chunk {
 public:
-	MMapChunk(Byte* data, size_t size) : Chunk(data, size) {
+	ManagedChunk(size_t size) : Chunk(new Byte[size], size, size) {
 	}
 
-	virtual ~MMapChunk() {
-		munmap(GetData(), GetSize());
+	ManagedChunk(size_t size, size_t capacity) : Chunk(new Byte[capacity], size, capacity) {
+	}
+
+	virtual ~ManagedChunk() {
+		delete[] GetData();
 	}
 };
 
 }
 
-MMapFileContainer::MMapFileContainer(const std::string& path) {
-	int fd = open(path.c_str(), O_RDONLY);
-	if (fd == -1)
-		throw std::runtime_error("cannot open() file");
+}
 
-	try {
-		struct stat st;
-		if (fstat(fd, &st) == -1)
-			throw std::runtime_error("cannot stat() file");
-
-		int mmap_flags = MAP_PRIVATE;
-#ifdef MAP_NOCORE
-		mmap_flags |= MAP_NOCORE;
 #endif
-#ifdef MAP_NORESERVE
-		mmap_flags |= MAP_NORESERVE;
-#endif
-
-		void* map = mmap(nullptr, st.st_size, PROT_READ, mmap_flags, fd, 0);
-		if (map == nullptr)
-			throw std::runtime_error("mmap() failed");
-
-		chunk_.reset(new Internal::MMapChunk(reinterpret_cast<Byte*>(map), st.st_size));
-	} catch(...) {
-		close(fd);
-		throw;
-	}
-
-	close(fd);
-}
-
-MMapFileContainer::~MMapFileContainer() {
-}
-
-Buffer MMapFileContainer::GetSlice(size_t offset, size_t size) const {
-	return Buffer(chunk_, offset, size);
-}
-
-size_t MMapFileContainer::GetSize() const {
-	return chunk_->GetSize();
-}
-
-}

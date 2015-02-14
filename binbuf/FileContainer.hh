@@ -24,29 +24,17 @@
  * SUCH DAMAGE.
  */
 
-#ifndef BINFMT_MANAGEDCHUNK_HH
-#define BINFMT_MANAGEDCHUNK_HH
+#ifndef BINBUF_FILECONTAINER_HH
+#define BINBUF_FILECONTAINER_HH
 
-#include <binfmt/internal/Chunk.hh>
+#include <binbuf/MMapFileContainer.hh>
 
-namespace BinFmt {
+namespace BinBuf {
 
-namespace Internal {
-
-class ManagedChunk : public Chunk {
-public:
-	ManagedChunk(size_t size) : Chunk(new Byte[size], size, size) {
-	}
-
-	ManagedChunk(size_t size, size_t capacity) : Chunk(new Byte[capacity], size, capacity) {
-	}
-
-	virtual ~ManagedChunk() {
-		delete[] GetData();
-	}
-};
-
-}
+// TODO: mmap inplementation may not be available on target system,
+// so improve this and CMakeLists.txt to choose between StreamFileContainer
+// and MMapFileContainer as appropriate
+typedef MMapFileContainer FileContainer;
 
 }
 

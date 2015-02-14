@@ -3,8 +3,8 @@ compiler:
   - gcc
   - clang
 env:
-  - BINFMT_BYTE_TYPE="char"
-  - BINFMT_BYTE_TYPE="unsigned char"
+  - BINBUF_BYTE_TYPE="char"
+  - BINBUF_BYTE_TYPE="unsigned char"
 before_install:
   - sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
@@ -13,4 +13,4 @@ before_install:
 script:
   - cmake . -DCMAKE_INSTALL_PREFIX=`pwd`/_prefix -DBINFMT_BYTE_TYPE="$BINFMT_BYTE_TYPE"
   - make && make test && make install
-  - cppcheck -I . --enable=style,performance,portability,information,missingInclude --error-exitcode=2 binfmt
+  - cppcheck -I . --enable=style,performance,portability,information,missingInclude --error-exitcode=2 binbuf

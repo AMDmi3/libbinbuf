@@ -24,27 +24,50 @@
  * SUCH DAMAGE.
  */
 
-#ifndef BINFMT_STREAMFILECONTAINER_HH
-#define BINFMT_STREAMFILECONTAINER_HH
+#ifndef BINBUF_CHUNK_HH
+#define BINBUF_CHUNK_HH
 
-#include <binfmt/Buffer.hh>
+#include <binbuf/Config.hh>
 
-#include <fstream>
+namespace BinBuf {
 
-namespace BinFmt {
+namespace Internal {
 
-class StreamFileContainer : public Slicable {
+class Chunk {
 private:
-	mutable std::ifstream stream_;
+	Byte* data_;
 	size_t size_;
+	const size_t capacity_;
+
+protected:
+	Chunk(Byte* data, size_t size) : data_(data), size_(size), capacity_(size) {
+	}
+
+	Chunk(Byte* data, size_t size, size_t capacity) : data_(data), size_(size), capacity_(capacity) {
+	}
 
 public:
-	StreamFileContainer(const std::string& path);
-	virtual ~StreamFileContainer();
+	virtual ~Chunk() {
+	}
 
-	virtual Buffer GetSlice(size_t offset = 0, size_t size = -1) const override final;
-	virtual size_t GetSize() const override final;
+	Chunk(const Chunk&) = delete;
+	Chunk& operator=(const Chunk&) = delete;
+	Chunk(Chunk&&) = delete;
+	Chunk& operator=(Chunk&&) = delete;
+
+	Byte* GetData() { return data_; }
+	const Byte* GetData() const { return data_; }
+	size_t GetSize() const { return size_; }
+	size_t GetCapacity() const { return capacity_; }
+
+	void Append(Byte data) { data_[size_++] = data; }
+	void Append(const Byte* data, size_t size) {
+		std::copy(data, data + size, data_ + size_);
+		size_ += size;
+	}
 };
+
+}
 
 }
 

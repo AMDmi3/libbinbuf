@@ -1,11 +1,11 @@
-#include <binfmt/MMapFileContainer.hh>
-#include <binfmt/StreamFileContainer.hh>
+#include <binbuf/MMapFileContainer.hh>
+#include <binbuf/StreamFileContainer.hh>
 
 #include <vector>
 
 #include "testing.h"
 
-using namespace BinFmt;
+using namespace BinBuf;
 
 BEGIN_TEST()
 	// test mmap container itself

@@ -24,40 +24,31 @@
  * SUCH DAMAGE.
  */
 
-#include <iostream>
+#ifndef BINBUF_MMAPFILECONTAINER_HH
+#define BINBUF_MMAPFILECONTAINER_HH
+
+#include <binbuf/Buffer.hh>
+
 #include <memory>
 
-#include <binfmt/StreamFileContainer.hh>
-#include <binfmt/internal/ManagedChunk.hh>
+namespace BinBuf {
 
-namespace BinFmt {
-
-StreamFileContainer::StreamFileContainer(const std::string& path) {
-	stream_.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	stream_.open(path, std::ios::binary);
-
-	stream_.seekg(0, std::ios_base::end);
-	size_ = stream_.tellg();
+namespace Internal {
+class MMapChunk;
 }
 
-StreamFileContainer::~StreamFileContainer() {
-}
+class MMapFileContainer : public Slicable {
+private:
+	std::shared_ptr<Internal::MMapChunk> chunk_;
 
-Buffer StreamFileContainer::GetSlice(size_t offset, size_t size) const {
-	if (offset > size_)
-		offset = size_;
-	if (size > size_ - offset)
-		size = size_ - offset;
-	if (size == 0)
-		return Buffer(std::make_shared<Internal::ManagedChunk>(0));
-	std::shared_ptr<Internal::ManagedChunk> chunk = std::make_shared<Internal::ManagedChunk>(std::min(size, size_ - offset));
-	stream_.seekg(offset);
-	stream_.read(reinterpret_cast<std::ifstream::char_type*>(chunk->GetData()), size);
-	return Buffer(chunk);
-}
+public:
+	MMapFileContainer(const std::string& path);
+	virtual ~MMapFileContainer();
 
-size_t StreamFileContainer::GetSize() const {
-	return size_;
-}
+	virtual Buffer GetSlice(size_t offset = 0, size_t size = -1) const override final;
+	virtual size_t GetSize() const override final;
+};
 
 }
+
+#endif

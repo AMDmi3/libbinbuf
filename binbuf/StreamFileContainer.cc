@@ -24,18 +24,40 @@
  * SUCH DAMAGE.
  */
 
-#ifndef BINFMT_FILECONTAINER_HH
-#define BINFMT_FILECONTAINER_HH
+#include <iostream>
+#include <memory>
 
-#include <binfmt/MMapFileContainer.hh>
+#include <binbuf/StreamFileContainer.hh>
+#include <binbuf/internal/ManagedChunk.hh>
 
-namespace BinFmt {
+namespace BinBuf {
 
-// TODO: mmap inplementation may not be available on target system,
-// so improve this and CMakeLists.txt to choose between StreamFileContainer
-// and MMapFileContainer as appropriate
-typedef MMapFileContainer FileContainer;
+StreamFileContainer::StreamFileContainer(const std::string& path) {
+	stream_.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	stream_.open(path, std::ios::binary);
 
+	stream_.seekg(0, std::ios_base::end);
+	size_ = stream_.tellg();
 }
 
-#endif
+StreamFileContainer::~StreamFileContainer() {
+}
+
+Buffer StreamFileContainer::GetSlice(size_t offset, size_t size) const {
+	if (offset > size_)
+		offset = size_;
+	if (size > size_ - offset)
+		size = size_ - offset;
+	if (size == 0)
+		return Buffer(std::make_shared<Internal::ManagedChunk>(0));
+	std::shared_ptr<Internal::ManagedChunk> chunk = std::make_shared<Internal::ManagedChunk>(std::min(size, size_ - offset));
+	stream_.seekg(offset);
+	stream_.read(reinterpret_cast<std::ifstream::char_type*>(chunk->GetData()), size);
+	return Buffer(chunk);
+}
+
+size_t StreamFileContainer::GetSize() const {
+	return size_;
+}
+
+}

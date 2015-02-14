@@ -24,51 +24,72 @@
  * SUCH DAMAGE.
  */
 
-#ifndef BINFMT_CHUNK_HH
-#define BINFMT_CHUNK_HH
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
-#include <binfmt/Config.hh>
+#include <stdexcept>
 
-namespace BinFmt {
+#include <binbuf/MMapFileContainer.hh>
+#include <binbuf/internal/Chunk.hh>
+
+namespace BinBuf {
 
 namespace Internal {
 
-class Chunk {
-private:
-	Byte* data_;
-	size_t size_;
-	const size_t capacity_;
-
-protected:
-	Chunk(Byte* data, size_t size) : data_(data), size_(size), capacity_(size) {
-	}
-
-	Chunk(Byte* data, size_t size, size_t capacity) : data_(data), size_(size), capacity_(capacity) {
-	}
-
+class MMapChunk : public Chunk {
 public:
-	virtual ~Chunk() {
+	MMapChunk(Byte* data, size_t size) : Chunk(data, size) {
 	}
 
-	Chunk(const Chunk&) = delete;
-	Chunk& operator=(const Chunk&) = delete;
-	Chunk(Chunk&&) = delete;
-	Chunk& operator=(Chunk&&) = delete;
-
-	Byte* GetData() { return data_; }
-	const Byte* GetData() const { return data_; }
-	size_t GetSize() const { return size_; }
-	size_t GetCapacity() const { return capacity_; }
-
-	void Append(Byte data) { data_[size_++] = data; }
-	void Append(const Byte* data, size_t size) {
-		std::copy(data, data + size, data_ + size_);
-		size_ += size;
+	virtual ~MMapChunk() {
+		munmap(GetData(), GetSize());
 	}
 };
 
 }
 
+MMapFileContainer::MMapFileContainer(const std::string& path) {
+	int fd = open(path.c_str(), O_RDONLY);
+	if (fd == -1)
+		throw std::runtime_error("cannot open() file");
+
+	try {
+		struct stat st;
+		if (fstat(fd, &st) == -1)
+			throw std::runtime_error("cannot stat() file");
+
+		int mmap_flags = MAP_PRIVATE;
+#ifdef MAP_NOCORE
+		mmap_flags |= MAP_NOCORE;
+#endif
+#ifdef MAP_NORESERVE
+		mmap_flags |= MAP_NORESERVE;
+#endif
+
+		void* map = mmap(nullptr, st.st_size, PROT_READ, mmap_flags, fd, 0);
+		if (map == nullptr)
+			throw std::runtime_error("mmap() failed");
+
+		chunk_.reset(new Internal::MMapChunk(reinterpret_cast<Byte*>(map), st.st_size));
+	} catch(...) {
+		close(fd);
+		throw;
+	}
+
+	close(fd);
 }
 
-#endif
+MMapFileContainer::~MMapFileContainer() {
+}
+
+Buffer MMapFileContainer::GetSlice(size_t offset, size_t size) const {
+	return Buffer(chunk_, offset, size);
+}
+
+size_t MMapFileContainer::GetSize() const {
+	return chunk_->GetSize();
+}
+
+}

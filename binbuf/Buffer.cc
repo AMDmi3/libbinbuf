@@ -24,13 +24,13 @@
  * SUCH DAMAGE.
  */
 
-#include <binfmt/Buffer.hh>
+#include <binbuf/Buffer.hh>
 
-#include <binfmt/internal/ManagedChunk.hh>
+#include <binbuf/internal/ManagedChunk.hh>
 
 #include <algorithm>
 
-namespace BinFmt {
+namespace BinBuf {
 
 Buffer::Buffer(std::shared_ptr<Internal::Chunk> chunk, size_t offset, size_t size) : chunk_(chunk), offset_(offset), size_(size) {
 	size_t real_size = chunk_->GetSize();
