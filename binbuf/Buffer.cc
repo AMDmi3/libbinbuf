@@ -189,3 +189,8 @@ std::string Buffer::GetString(size_t offset, size_t length) const {
 }
 
 }
+
+std::ostream& operator<<(std::ostream& stream, const BinBuf::Buffer& buffer) {
+	stream.write(reinterpret_cast<const char*>(buffer.GetData()), buffer.GetSize());
+	return stream;
+}

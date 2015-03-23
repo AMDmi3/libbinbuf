@@ -31,6 +31,7 @@
 
 #include <memory>
 #include <string>
+#include <ostream>
 
 namespace BinBuf {
 
@@ -103,5 +104,7 @@ public:
 };
 
 }
+
+std::ostream& operator<<(std::ostream& stream, const BinBuf::Buffer& buffer);
 
 #endif
